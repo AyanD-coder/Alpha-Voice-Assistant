@@ -88,9 +88,7 @@ def process_command(command):
         speak("Opening GitHub")
         webbrowser.open("https://github.com/AyanD-coder")
   
-    # elif command in ("exit", "quit", "stop", "bye"):
-    #     speak("Goodbye")
-    #     exit()
+
 
     elif any(word in command for word in ("exit", "quit", "stop", "bye")):
         speak("Goodbye")
