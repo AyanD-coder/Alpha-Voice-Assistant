@@ -115,7 +115,7 @@ if __name__ == "__main__":
                 print(f"You said: {word}")
 
                 if "hello" in word.lower()  or "alpha" in word.lower() or "hey" in word.lower():
-                    speak("Hello Ayan, how can I help you?")
+                    speak("Hello Coder, how can I help you?")
                     with sr.Microphone() as source:
                         print("Listening for command......")
                         audio = r.listen(source, timeout=3, phrase_time_limit=10)
