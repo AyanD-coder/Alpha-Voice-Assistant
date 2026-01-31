@@ -3,45 +3,48 @@ import speech_recognition as sr
 import pyttsx3
 import webbrowser
 import time
-import requests
 from dotenv import load_dotenv
-import requests
 
-load_dotenv()
+# load_dotenv()
+# HF_TOKEN = os.getenv("HF_TOKEN")
+# print("Token loaded:", HF_TOKEN[:10], "...")
+# # def ask_ai_puter(question):
+# #     url = "https://puter.ai/api/ask"
+# #     try:
+# #         response = requests.post(url, json={"query": question}, timeout=15)
+# #         if response.status_code == 200:
+# #             data = response.json()
+# #             return data.get("answer", "[AI error] No answer found")
+# #         else:
+# #             return f"[AI error] {response.status_code}: {response.text}"
+# #     except Exception as e:
+# #         return f"[AI error] Network issue: {e}"
 
-def ask_ai_puter(question):
-    url = "https://puter.ai/api/ask"
-    try:
-        response = requests.post(url, json={"query": question}, timeout=15)
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("answer", "[AI error] No answer found")
-        else:
-            return f"[AI error] {response.status_code}: {response.text}"
-    except Exception as e:
-        return f"[AI error] Network issue: {e}"
 
-
+# def ask_ai_hf(question):
+#     """Query Hugging Face API via router"""
+#     url = "https://router.huggingface.com/api/models/gpt2"
+#     headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+#     payload = {"inputs": question}
+#     try:
+#         response = requests.post(url, headers=headers, json=payload, timeout=15)
+#         if response.status_code == 200:
+#             data = response.json()
+#             # Handle different response formats
+#             if isinstance(data, list) and "generated_text" in data[0]:
+#                 return data[0]["generated_text"]
+#             elif isinstance(data, dict):
+#                 return data.get("generated_text", str(data))
+#             else:
+#                 return str(data)
+#         else:
+#             return f"[HF error] {response.status_code}: {response.text}"
+#     except Exception as e:
+#         return f"[HF error] Network issue: {e}"
 
 
 
 r = sr.Recognizer()
-
-def callback(recognizer, audio):
-    try:
-        word = recognizer.recognize_google(audio)
-        print(f"You said: {word}")
-        # You can call process_command(word) here if you want
-    except sr.UnknownValueError:
-        print("Could not understand audio")
-    except sr.RequestError as e:
-        print(f"API error: {e}")
-
-stop_listening = None
-try:
-    stop_listening = r.listen_in_background(sr.Microphone(), callback)
-except Exception as e:
-    print(f"Background listening disabled: {e}")
  
 def speak(text):
     print(f"[speak] -> {text}")
@@ -88,18 +91,23 @@ def process_command(command):
         speak("Opening GitHub")
         webbrowser.open("https://github.com/AyanD-coder")
   
-    # elif command in ("exit", "quit", "stop", "bye"):
-    #     speak("Goodbye")
-    #     exit()
+    
 
     elif any(word in command for word in ("exit", "quit", "stop", "bye")):
         speak("Goodbye")
         exit()
 
-    else:
-        speak("Let me think...")
-        answer = ask_ai_puter(command)
-        speak(answer)
+    # elif any(word in command for word in ("what", "who", "how", "why", "explain", "tell me about", "define")):
+    #     speak("Let me think...")
+    #     answer = ask_ai_puter(command)
+    #     speak(answer)
+
+    # else:
+    #     speak("Let me think...")
+    #     answer = ask_ai_hf(command)
+    #     speak(answer)
+
+
 
 if __name__ == "__main__":
     print("Assistant is running... say something!")
@@ -117,7 +125,7 @@ if __name__ == "__main__":
                 print(f"You said: {word}")
 
                 if "hello" in word.lower()  or "alpha" in word.lower() or "hey" in word.lower():
-                    speak("Hello Ayan, how can I help you?")
+                    speak("Hello Coder, how can I help you?")
                     with sr.Microphone() as source:
                         print("Listening for command......")
                         audio = r.listen(source, timeout=3, phrase_time_limit=10)
@@ -133,6 +141,8 @@ if __name__ == "__main__":
 
             except sr.UnknownValueError:
                 print("Sorry, I could not understand the audio.")
+            except sr.WaitTimeoutError:
+                print("Listening timed out while waiting for phrase to start")
             except sr.RequestError as e:
                 print(f"Could not request results; {e}")
             except Exception as e:
@@ -140,10 +150,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Interrupted by user. Exiting...")
     finally:
-        if stop_listening:
-            try:
-                stop_listening()
-            except Exception:
-                pass
+        print("Exiting.")
 
           
